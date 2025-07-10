@@ -11,7 +11,7 @@ WORKDIR /app
 
 # Copy requirements and install (Task 1 by default)
 COPY task1/requirements.txt ./requirements.txt
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir numpy==1.24.4 && pip install --no-cache-dir -r requirements.txt
 
 # Copy all code
 COPY . .
