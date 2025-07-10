@@ -1,10 +1,8 @@
-opencv-python
+opencv-python==4.8.1.78
 ultralytics
 torch
 tqdm
 numpy
 matplotlib
-scipy
-streamlit
 scipy
 streamlit
