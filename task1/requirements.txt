@@ -1,0 +1,10 @@
+opencv-python
+ultralytics
+torch
+tqdm
+numpy
+matplotlib
+scipy
+streamlit
+scipy
+streamlit
