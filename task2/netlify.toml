@@ -1,0 +1,11 @@
+[build]
+  command = ""
+  publish = "."
+
+[build.environment]
+  PYTHON_VERSION = "3.8"
+
+[[redirects]]
+  from = "/"
+  to = "/streamlit_app.py"
+  status = 200
