@@ -18,7 +18,7 @@ st.markdown("""
 This dashboard lets you:
 - **Watch the tracked output video**
 - **Explore player ID assignments frame-by-frame**
-- **Visualize player trajectories and stats**
+- **Visualize player trajectories and stats and much more**
 """)
 
 # --- Upload and Process Video ---
