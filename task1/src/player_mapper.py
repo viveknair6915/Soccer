@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.optimize import linear_sum_assignment
-from src.feature_extractor import extract_color_histogram
+from feature_extractor import extract_color_histogram
 import cv2
 import json
 

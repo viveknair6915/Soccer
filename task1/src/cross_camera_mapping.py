@@ -1,18 +1,18 @@
 import os
 import cv2
-from src.detector import PlayerDetector
-from src.tracker import PlayerTracker
-from src.feature_extractor import extract_color_histogram
-from src.player_mapper import load_tracking_json, extract_all_features, map_players
-from src.utils import save_tracking_results
+from detector import PlayerDetector
+from tracker import PlayerTracker
+from feature_extractor import extract_color_histogram
+from player_mapper import load_tracking_json, extract_all_features, map_players
+from utils import save_tracking_results
 import json
 from tqdm import tqdm
 
-def process_video(video_path, model_path, output_video_path, output_json_path, label_filter='player', output_format='mp4'):
+def process_video(video_path, model_path, output_video_path, output_json_path, label_filter='player'):
     detector = PlayerDetector(model_path)
     tracker = PlayerTracker(max_disappeared=15)
     cap = cv2.VideoCapture(video_path)
-    fourcc = cv2.VideoWriter_fourcc(*('mp4v' if output_format=='mp4' else 'XVID'))
+    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS)

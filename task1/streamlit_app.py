@@ -1,12 +1,38 @@
 import streamlit as st
+import os
+import subprocess
+
+# Mapping of required video files to their Google Drive file IDs
+VIDEO_FILES = {
+    "data/output_broadcast_tracked.mp4": "1Ml7sbSeArjQqw6kGF_vsYagARFpfaSLX",
+    "data/output_tacticam_tracked.mp4": "1gDPxQLPyjftZ1oBTbF9H0KpUdrUNQYwW",
+    "data/15sec_input_720p.mp4": "1oHeQee9sbdP5mG10UfTy67Zi_6cKJdce",
+}
+
+def download_with_gdown(file_id, output_path):
+    try:
+        import gdown
+    except ImportError:
+        subprocess.check_call(["pip", "install", "gdown"])
+        import gdown
+    url = f"https://drive.google.com/uc?id={file_id}"
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    gdown.download(url, output_path, quiet=False)
+
+def ensure_videos():
+    for local_path, file_id in VIDEO_FILES.items():
+        if not os.path.exists(local_path):
+            st.info(f"Downloading {os.path.basename(local_path)} from Google Drive...")
+            download_with_gdown(file_id, local_path)
+            st.success(f"Downloaded {os.path.basename(local_path)}.")
+
+ensure_videos()
 import cv2
 import json
 import numpy as np
 import os
 from pathlib import Path
 import tempfile
-import shutil
-import subprocess
 
 st.set_page_config(page_title="Soccer Player Re-ID Dashboard (Task 1)", layout="wide")
 
@@ -46,70 +72,8 @@ if video_path.exists():
 else:
     st.warning(f"Not found: {video_path}")
 
-# --- Upload and Process Video ---
-st.header("2. Upload and Process Video")
-import traceback
-from pathlib import Path
-
-def safe_filename(name):
-    # Remove potentially unsafe characters
-    return "".join(c for c in name if c.isalnum() or c in (' ', '.', '_', '-')).rstrip()
-
-uploaded_file = st.file_uploader("Upload video to process", type=["mp4", "avi", "mov", "mkv"])
-if uploaded_file:
-    output_format = st.selectbox("Select output format", ["mp4", "avi"])
-    # Save uploaded file
-    data_dir = Path("data")
-    data_dir.mkdir(exist_ok=True)
-    input_filename = safe_filename(uploaded_file.name)
-    input_path = data_dir / input_filename
-    with open(input_path, "wb") as f:
-        f.write(uploaded_file.read())
-    st.success(f"Uploaded: {input_filename}")
-
-    model_path = Path("models") / "best.pt"
-    # --- Auto-download model weights if missing ---
-    if not model_path.exists():
-        st.info("Model weights not found. Attempting to download best.pt...")
-        model_path.parent.mkdir(exist_ok=True)
-        url = "https://drive.google.com/uc?export=download&id=11y3zZbqvwR76UiD2PtEPwpo0_wxt69J9"  # <-- Replace with your actual public link
-        try:
-            import requests
-            with requests.get(url, stream=True) as r:
-                r.raise_for_status()
-                with open(model_path, "wb") as f:
-                    for chunk in r.iter_content(chunk_size=8192):
-                        f.write(chunk)
-            st.success("Model weights downloaded successfully.")
-        except Exception as e:
-            st.error(f"Failed to download model weights: {e}")
-    if model_path.exists():
-        import torch
-        try:
-            import ultralytics
-        except ImportError:
-            ultralytics = None
-        st.info(f"Model path: {model_path.resolve()}\nSize: {model_path.stat().st_size} bytes\nTorch version: {torch.__version__}\nUltralytics version: {getattr(ultralytics, '__version__', 'not installed')}")
-        output_base = Path(input_filename).stem
-        output_path = data_dir / f"output_{output_base}_tracked.{output_format}"
-        output_json = data_dir / f"tracking_{output_base}.json"
-        try:
-            with st.spinner("Processing video. This may take a while..."):
-                from src.cross_camera_mapping import process_video
-                process_video(str(input_path), str(model_path), str(output_path), str(output_json), label_filter='player', output_format=output_format)
-            st.success(f"Processing complete! Output: {output_path.name}")
-            st.video(str(output_path))
-            with open(output_path, "rb") as out_f:
-                st.download_button(f"Download Output ({output_format})", out_f, file_name=output_path.name)
-        except Exception as e:
-            st.error(f"Error during processing: {e}")
-            st.code(traceback.format_exc())
-            st.info("If you see a _pickle.UnpicklingError or 'invalid load key', please ensure your model was exported with the same Ultralytics and Torch version as shown above, and is a YOLOv8 PyTorch .pt file.")
-    else:
-        st.error(f"Model weights not found at {model_path} and could not be downloaded. Please upload best.pt to models/ directory or update the download URL.")
-
 # --- Frame-by-frame Visualization ---
-st.header("3. Frame-by-Frame Visualization")
+st.header("2. Frame-by-Frame Visualization")
 json_options = {
     "Broadcast Tracking": TRACKING1_JSON_PATH,
     "Tacticam Tracking": TRACKING2_JSON_PATH,
