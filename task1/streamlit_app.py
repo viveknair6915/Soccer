@@ -84,14 +84,19 @@ if uploaded_file:
         except Exception as e:
             st.error(f"Failed to download model weights: {e}")
     if model_path.exists():
+        import torch
+        try:
+            import ultralytics
+        except ImportError:
+            ultralytics = None
+        st.info(f"Model path: {model_path.resolve()}\nSize: {model_path.stat().st_size} bytes\nTorch version: {torch.__version__}\nUltralytics version: {getattr(ultralytics, '__version__', 'not installed')}")
         output_base = Path(input_filename).stem
         output_path = data_dir / f"output_{output_base}_tracked.{output_format}"
         output_json = data_dir / f"tracking_{output_base}.json"
         try:
             with st.spinner("Processing video. This may take a while..."):
-                # Patch process_video to support output format if needed
                 from src.cross_camera_mapping import process_video
-                process_video(str(input_path), str(model_path), str(output_path), str(output_json), label_filter='player')
+                process_video(str(input_path), str(model_path), str(output_path), str(output_json), label_filter='player', output_format=output_format)
             st.success(f"Processing complete! Output: {output_path.name}")
             st.video(str(output_path))
             with open(output_path, "rb") as out_f:
@@ -99,6 +104,7 @@ if uploaded_file:
         except Exception as e:
             st.error(f"Error during processing: {e}")
             st.code(traceback.format_exc())
+            st.info("If you see a _pickle.UnpicklingError or 'invalid load key', please ensure your model was exported with the same Ultralytics and Torch version as shown above, and is a YOLOv8 PyTorch .pt file.")
     else:
         st.error(f"Model weights not found at {model_path} and could not be downloaded. Please upload best.pt to models/ directory or update the download URL.")
 
