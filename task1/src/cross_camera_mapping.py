@@ -8,11 +8,11 @@ from src.utils import save_tracking_results
 import json
 from tqdm import tqdm
 
-def process_video(video_path, model_path, output_video_path, output_json_path, label_filter='player'):
+def process_video(video_path, model_path, output_video_path, output_json_path, label_filter='player', output_format='mp4'):
     detector = PlayerDetector(model_path)
     tracker = PlayerTracker(max_disappeared=15)
     cap = cv2.VideoCapture(video_path)
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    fourcc = cv2.VideoWriter_fourcc(*('mp4v' if output_format=='mp4' else 'XVID'))
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
     fps = cap.get(cv2.CAP_PROP_FPS)
