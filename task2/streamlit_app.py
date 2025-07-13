@@ -18,7 +18,7 @@ st.markdown("""
 This dashboard lets you:
 - **Watch the tracked output video**
 - **Explore player ID assignments frame-by-frame**
-- **Visualize player trajectories and stats and much more**
+- **Visualize player trajectories and stats**
 """)
 
 # --- Upload and Process Video ---
@@ -41,9 +41,22 @@ if uploaded_file:
     st.success(f"Uploaded: {input_filename}")
 
     model_path = Path("models") / "best.pt"
+    # --- Auto-download model weights if missing ---
     if not model_path.exists():
-        st.error(f"Model weights not found at {model_path}. Please upload best.pt to models/ directory.")
-    else:
+        st.info("Model weights not found. Attempting to download best.pt...")
+        model_path.parent.mkdir(exist_ok=True)
+        url = "https://drive.google.com/uc?export=download&id=11y3zZbqvwR76UiD2PtEPwpo0_wxt69J9"  # <-- Replace with your actual public link
+        try:
+            import requests
+            with requests.get(url, stream=True) as r:
+                r.raise_for_status()
+                with open(model_path, "wb") as f:
+                    for chunk in r.iter_content(chunk_size=8192):
+                        f.write(chunk)
+            st.success("Model weights downloaded successfully.")
+        except Exception as e:
+            st.error(f"Failed to download model weights: {e}")
+    if model_path.exists():
         output_base = Path(input_filename).stem
         output_path = data_dir / f"output_{output_base}_tracked.{output_format}"
         output_json = data_dir / f"tracking_{output_base}.json"
@@ -58,6 +71,8 @@ if uploaded_file:
         except Exception as e:
             st.error(f"Error during processing: {e}")
             st.code(traceback.format_exc())
+    else:
+        st.error(f"Model weights not found at {model_path} and could not be downloaded. Please upload best.pt to models/ directory or update the download URL.")
 
 # --- Video Viewer ---
 st.header("2. Tracked Output Video")
