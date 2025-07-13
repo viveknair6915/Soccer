@@ -5,6 +5,8 @@ import numpy as np
 import os
 from pathlib import Path
 import tempfile
+import shutil
+import subprocess
 
 st.set_page_config(page_title="Soccer Player Re-ID Dashboard (Task 1)", layout="wide")
 
@@ -44,8 +46,49 @@ if video_path.exists():
 else:
     st.warning(f"Not found: {video_path}")
 
+# --- Upload and Process Video ---
+st.header("2. Upload and Process Video")
+import traceback
+from pathlib import Path
+
+def safe_filename(name):
+    # Remove potentially unsafe characters
+    return "".join(c for c in name if c.isalnum() or c in (' ', '.', '_', '-')).rstrip()
+
+uploaded_file = st.file_uploader("Upload video to process", type=["mp4", "avi", "mov", "mkv"])
+if uploaded_file:
+    output_format = st.selectbox("Select output format", ["mp4", "avi"])
+    # Save uploaded file
+    data_dir = Path("data")
+    data_dir.mkdir(exist_ok=True)
+    input_filename = safe_filename(uploaded_file.name)
+    input_path = data_dir / input_filename
+    with open(input_path, "wb") as f:
+        f.write(uploaded_file.read())
+    st.success(f"Uploaded: {input_filename}")
+
+    model_path = Path("models") / "best.pt"
+    if not model_path.exists():
+        st.error(f"Model weights not found at {model_path}. Please upload best.pt to models/ directory.")
+    else:
+        output_base = Path(input_filename).stem
+        output_path = data_dir / f"output_{output_base}_tracked.{output_format}"
+        output_json = data_dir / f"tracking_{output_base}.json"
+        try:
+            with st.spinner("Processing video. This may take a while..."):
+                # Patch process_video to support output format if needed
+                from src.cross_camera_mapping import process_video
+                process_video(str(input_path), str(model_path), str(output_path), str(output_json), label_filter='player')
+            st.success(f"Processing complete! Output: {output_path.name}")
+            st.video(str(output_path))
+            with open(output_path, "rb") as out_f:
+                st.download_button(f"Download Output ({output_format})", out_f, file_name=output_path.name)
+        except Exception as e:
+            st.error(f"Error during processing: {e}")
+            st.code(traceback.format_exc())
+
 # --- Frame-by-frame Visualization ---
-st.header("2. Frame-by-Frame Visualization")
+st.header("3. Frame-by-Frame Visualization")
 json_options = {
     "Broadcast Tracking": TRACKING1_JSON_PATH,
     "Tacticam Tracking": TRACKING2_JSON_PATH,
