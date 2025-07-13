@@ -1,9 +1,9 @@
 import cv2
 import os
-from detector import PlayerDetector
-from tracker import PlayerTracker
-from feature_extractor import extract_color_histogram
-from utils import save_tracking_results
+from src.detector import PlayerDetector
+from src.tracker import PlayerTracker
+from src.feature_extractor import extract_color_histogram
+from src.utils import save_tracking_results
 import numpy as np
 from tqdm import tqdm
 
