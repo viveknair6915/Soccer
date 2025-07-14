@@ -35,6 +35,20 @@ ensure_required_files()
 import cv2
 import json
 import numpy as np
+
+def robust_load_json(json_path):
+    try:
+        with open(json_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        st.error(f"Failed to load {json_path} as JSON. Error: {e}")
+        try:
+            with open(json_path, 'rb') as f:
+                raw = f.read(300)
+            st.code(raw[:300])
+        except Exception as e2:
+            st.warning(f"Could not read file as binary: {e2}")
+        return None
 import os
 from pathlib import Path
 import tempfile
@@ -86,14 +100,28 @@ json_options = {
 json_choice = st.selectbox("Select tracking data:", list(json_options.keys()), key="json_choice")
 json_path = json_options[json_choice]
 if json_path.exists():
-    with open(json_path, "r") as f:
-        tracking_data = json.load(f)
-    st.write(f"Total frames: {len(tracking_data)}")
-    frame_num = st.slider("Select frame:", 0, len(tracking_data)-1, 0, key="frame_slider")
-    frame_info = tracking_data[frame_num]
-    st.json(frame_info)
-    # Try to load and overlay bounding boxes on the video frame
-    video_for_json = VIDEO1_PATH if json_choice == "Broadcast Tracking" else VIDEO2_PATH
+    tracking_data = robust_load_json(json_path)
+    if tracking_data is not None:
+        st.write(f"Total frames: {len(tracking_data)}")
+        frame_num = st.slider("Select frame:", 0, len(tracking_data)-1, 0, key="frame_slider")
+        frame_info = tracking_data[frame_num]
+        st.json(frame_info)
+        # Try to load and overlay bounding boxes on the video frame
+        video_for_json = VIDEO1_PATH if json_choice == "Broadcast Tracking" else VIDEO2_PATH
+        if video_for_json.exists():
+            cap = cv2.VideoCapture(str(video_for_json))
+            cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)
+            ret, frame = cap.read()
+            if ret:
+                # Draw bounding boxes
+                for bbox, pid in zip(frame_info['boxes'], frame_info['objects'].keys()):
+                    x1, y1, x2, y2 = map(int, bbox)
+                    color = (0, 255, 0)
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+                    cv2.putText(frame, f'ID {pid}', (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, color, 2)
+                # Show frame
+                st.image(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB), caption=f"Frame {frame_num}")
+            cap.release()
     if video_for_json.exists():
         cap = cv2.VideoCapture(str(video_for_json))
         cap.set(cv2.CAP_PROP_POS_FRAMES, frame_num)

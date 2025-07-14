@@ -35,6 +35,31 @@ ensure_required_files()
 import cv2
 import json
 import numpy as np
+
+def robust_load_json(json_path):
+    try:
+        with open(json_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except Exception as e:
+        st.error(f"Failed to load {json_path} as JSON. Error: {e}")
+        try:
+            with open(json_path, 'rb') as f:
+                raw = f.read(300)
+            st.code(raw[:300])
+        except Exception as e2:
+            st.warning(f"Could not read file as binary: {e2}")
+        return None
+
+def check_required_files():
+    missing = []
+    for path in REQUIRED_FILES.keys():
+        if not os.path.exists(path):
+            missing.append(path)
+    if missing:
+        st.error(f"The following required files are missing and could not be downloaded: {missing}. Please check your Google Drive sharing and try again.")
+        st.stop()
+
+check_required_files()
 import os
 from pathlib import Path
 
