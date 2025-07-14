@@ -65,13 +65,14 @@ from pathlib import Path
 
 st.set_page_config(page_title="Soccer Player Re-ID Dashboard (Task 2)", layout="wide")
 
-st.title("⚽ Soccer Player Re-Identification Dashboard – Task 2: Single-Camera Re-ID")
+st.markdown("""
+# :soccer: Soccer Player Re-Identification Dashboard – Task 2: Single-Camera Re-ID
+""")
 
 DATA_DIR = Path("data/")
 VIDEO_PATH = DATA_DIR / "output_broadcast_tracked.mp4"
 TRACKING_JSON_PATH = DATA_DIR / "tracking_broadcast.json"
 
-st.title("⚽ Soccer Player Re-Identification Dashboard")
 st.markdown("""
 This dashboard lets you:
 - **Watch the tracked output video**

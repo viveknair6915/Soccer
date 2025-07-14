@@ -74,7 +74,8 @@ Soccer/
 
 ## Usage
 ### Task 1: Cross-Camera Player Mapping
-- See `task1/README.md` for full instructions.
+- [Live Demo](https://soccer-8yec.onrender.com/)
+- See [task1/README.md](./task1/README.md) for details and screenshot.
 - Run the main pipeline:
   ```bash
   python src/cross_camera_mapping.py

@@ -1,4 +1,11 @@
-# Soccer Player Re-Identification – Task 2: Single-Camera Player Re-Identification
+# Soccer Player Re-Identification – Task 2: Single-Camera Re-ID
+
+[![Task 2 Dashboard Screenshot](./Screenshots/Screenshot 2025-07-14 141102.png)](https://soccer-task-2.onrender.com/)
+
+**Live Demo:** [https://soccer-task-2.onrender.com/](https://soccer-task-2.onrender.com/)
+
+---
+Player Re-Identification
 
 **Developed by Vivek V Nair**
 

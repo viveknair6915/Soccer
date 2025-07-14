@@ -1,4 +1,8 @@
-# Soccer Player Re-Identification – Task 1: Cross-Camera Player Mapping
+# Soccer Player Re-Identification – Task 1: Cross-Camera Mapping
+
+[![Task 1 Dashboard Screenshot](./Screenshots/Screenshot 2025-07-14 130447.png)](https://soccer-8yec.onrender.com/)
+
+**Live Demo:** [https://soccer-8yec.onrender.com/](https://soccer-8yec.onrender.com/)
 
 **Developed by Vivek V Nair**
 
