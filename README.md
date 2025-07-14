@@ -8,6 +8,23 @@
 
 ---
 
+## 🚀 Live Dashboards
+
+<table>
+<tr>
+<td>
+<b>Task 1: Cross-Camera Mapping</b><br>
+<a href="https://soccer-8yec.onrender.com/"><img src="./task1/Screenshots/Screenshot 2025-07-14 130447.png" width="400"/></a><br>
+<a href="https://soccer-8yec.onrender.com/">Live Demo</a>
+</td>
+<td>
+<b>Task 2: Single-Camera Re-ID</b><br>
+<a href="https://soccer-task-2.onrender.com/"><img src="./task2/Screenshots/Screenshot 2025-07-14 141102.png" width="400"/></a><br>
+<a href="https://soccer-task-2.onrender.com/">Live Demo</a>
+</td>
+</tr>
+</table>
+
 ## Overview
 This project solves the real-world challenge of player re-identification in soccer videos, ensuring that each player retains the same ID even across different camera feeds or after leaving and re-entering the frame. The solution is organized into two modular tasks:
 - **Task 1:** Cross-Camera Player Mapping
