@@ -7,10 +7,8 @@ REQUIRED_FILES = {
     "data/output_broadcast_tracked.mp4": "1Ml7sbSeArjQqw6kGF_vsYagARFpfaSLX",
     "data/output_tacticam_tracked.mp4": "1gDPxQLPyjftZ1oBTbF9H0KpUdrUNQYwW",
     "data/15sec_input_720p.mp4": "1oHeQee9sbdP5mG10UfTy67Zi_6cKJdce",
-    "data/tracking_broadcast.json": "1vpRY_GJsam13mT51eEYhcg4Ewsw_N8yr",
+    "data/tracking_broadcast.json": "1fcpsfsO_b_3k4WQOAyKMZzECgEE6mGaI",
     "data/tacticam_to_broadcast_id_mapping.json": "10oEoxqaE8lB5JjoNo0YcR-588PnTaJ22",
-    "data/tracking_tacticam.json": "1fcpsfsO_b_3k4WQOAyKMZzECgEE6mGaI",
-    "data/tracking_broadcast_tacticam.json": "1mWJ5GeD7Uk3KPixusPQvBIH4Y5ZGQAzO",
 }
 
 
